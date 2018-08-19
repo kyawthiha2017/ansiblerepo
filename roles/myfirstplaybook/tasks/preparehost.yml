@@ -1,0 +1,56 @@
+---
+
+- hosts: all
+  gather_facts: true
+  vars:
+    urhostname: ansibletarget20180820
+#  gather_facts: false 
+  tasks:
+#    - debug:
+#        msg: "connecting to {{ansible_nodename }} which is running {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+#    - hostname:
+#        name: ansibleslavenew 
+##    - debug: var=hostvars[inventory_hostname]['ansible_default_ipv4']['address']
+#    - debug: var=ansible_default_ipv4.address      
+
+    - name: Test for line
+      shell: grep "^{{ ansible_default_ipv4.address }} " /etc/hosts | wc -l
+      register: hostnameentry
+
+#    - debug:
+#        msg: "number of entry is {{ hostnameentry }}"
+
+    - name: remove existing entries from /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        state: absent
+        regexp: '^{{ ansible_default_ipv4.address }} '
+      when: hostnameentry.stdout|int >= 1 
+
+    - name: add new entries to /etc/hosts
+      lineinfile: dest=/etc/hosts line="{{ ansible_default_ipv4.address }} {{ urhostname }}"
+#      when: hostnameentry.stdout == "0"
+
+    - name: update /etc/hostname 
+      copy: content="{{ urhostname }}" dest=/etc/hostname
+
+
+
+
+#    - lineinfile:
+#        name: remove line from file
+#        path: /etc/hosts
+#        state: absent
+#        regexp: '^{{ ansible_default_ipv4.address }}'
+#
+#    - lineinfile:
+#        name: add line to file
+#        dest: /etc/hosts
+#        line: "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}"
+#        state: present
+#      with_items: "{{ groups.all }}"
+
+
+
+#        line: "{{ ansible_default_ipv4.address }} ansibleslave"

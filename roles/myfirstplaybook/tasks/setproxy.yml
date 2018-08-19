@@ -1,0 +1,29 @@
+---
+
+- hosts: all
+#  gather_facts: true
+  gather_facts: false 
+  tasks:
+#    - debug:
+#        msg: "connecting to {{ansible_nodename }} which is running {{ ansible_distribution }} {{ ansible_distribution_version }}"
+    - stat: 
+        path: /etc/yum.conf_ORG
+      register: yumconfbk
+    - name: Ansible copy directory to the remote server
+      copy:
+        src: /etc/yum.conf
+        dest: /etc/yum.conf_ORG
+        force: no
+        remote_src: True
+      when: not yumconfbk.stat.exists
+    - lineinfile:
+        path: /etc/yum.conf
+        line: 'proxy=http://172.16.1.5:8080'
+      when: not yumconfbk.stat.exists
+#    - lineinfile:
+#        path: /tmp/testfile
+#        line: '192.168.1.99 foo.lab.net foo'
+#    - yum:
+#        name: "*"
+#        state: "latest"
+#        environment:
