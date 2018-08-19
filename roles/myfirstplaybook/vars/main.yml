@@ -1,0 +1,7 @@
+---
+# vars file for myfirstplaybook
+- hosts: all
+  sudo: yes
+#  roles:
+#  - { role: "", packer_version: "0.7.0" }
+  

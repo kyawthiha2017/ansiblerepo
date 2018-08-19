@@ -1,0 +1,9 @@
+---
+# tasks file for common playbook
+
+- name: This is the
+  debug: Site is `"{{ site_id1 }}"
+
+- debug:
+    msg: "Get the common tasks here across all the playbooks "
+
